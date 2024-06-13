@@ -1,0 +1,271 @@
+<?php
+require_once("db.php");
+
+session_start();
+
+
+
+$appid=mysqli_real_escape_string($con,$_POST["appid"]);
+$_SESSION['appid']=$appid;
+
+$form_sql="select filled from student_data where application_id='$appid'";
+$result_form=mysqli_query($con,$form_sql);
+$filled=mysqli_fetch_array($result_form);
+$alloted_sql="select alloted from booking where application_id='$appid'";
+
+$result_alloted=mysqli_query($con,$alloted_sql);
+$alloted=mysqli_fetch_array($result_alloted);
+
+echo $alloted;
+
+$hostel_query="select hostel_no from student_data where application_id='$appid'";
+$result_hostel=mysqli_query($con,$hostel_query);
+$hostel=mysqli_fetch_array($result_hostel);
+
+echo $hostel;
+
+
+$upload_query="select uploaded from docs where application_id='$appid'";
+$result_upload=mysqli_query($con,$upload_query);
+$uploaded=mysqli_fetch_array($result_upload);
+
+echo $uploaded;
+
+$sql_hostel="select * from signup where application_id='$appid'";
+$result_hostel_check=mysqli_query($con,$sql_hostel);
+$signup_data=mysqli_fetch_array($result_hostel);
+
+echo $signup_data;
+
+$gender_sql="select gender from signup where application_id='$appid'";
+$result_gender=mysqli_query($con,$gender_sql);
+$gender_data=mysqli_fetch_array($result_gender);
+
+echo $gender_data;
+$_SESSION['gender']=$gender_data['gender'];
+
+if($signup_data['hosteler']==1)
+{
+if($uploaded['uploaded']!=1 && $_SESSION["authenticated"]==true)
+    {
+       
+        header('Location:doc.php');
+    }
+    
+    if($uploaded['uploaded']==1 && $filled['filled']!=1 && $_SESSION["authenticated"]==true)
+    {
+         
+            header('Location:form.php');
+    }
+    
+    if($uploaded['uploaded']==1 && $filled['filled']==1 && $alloted['alloted']!=1 && $_SESSION["authenticated"]==true)
+    {
+       if($hostel['hostel_no']=="1")
+       {
+            $_SESSION["authenticated"]=true;
+            header('Location:bh1.php');
+       }
+       
+       if($hostel['hostel_no']=="2")
+       {
+            $_SESSION["authenticated"]=true;
+            header('Location:bh2.php');
+       }
+       
+       if($hostel['hostel_no']=="5")
+       {
+            $_SESSION["authenticated"]=true;
+            header('Location:bh5.php');
+       }
+       
+       if($hostel['hostel_no']=="GH2")
+       {
+            $_SESSION["authenticated"]=true;
+            header('Location:gh2.php');
+       }
+    }
+    
+    if($uploaded['uploaded']==1 && $filled['filled']==1 && $alloted['alloted']==1 && $_SESSION["authenticated"]==true)
+    {
+         $_SESSION["authenticated"]=true;
+            header('Location:alloted.php');
+    }
+}
+
+else
+{
+    $_SESSION["authenticated"]=true;
+    header('Location:form_day.php');
+}
+
+?>
+
+
+<?php
+
+session_start();
+
+
+
+require_once("db.php");
+
+
+
+if(isset($_POST["login"]))
+{
+    
+
+$appid=mysqli_real_escape_string($con,$_POST["appid"]);
+$_SESSION['appid']=$appid;
+
+$password=mysqli_real_escape_string($con,$_POST["password"]);
+
+
+
+$sql="select application_id, password, gender from signup where application_id='$appid'";
+
+
+
+echo "<br><br>";
+$result=mysqli_query($con,$sql);
+$dbpassword=mysqli_fetch_array($result);
+
+$form_sql="select filled from student_data where application_id='$appid'";
+$result_form=mysqli_query($con,$form_sql);
+$filled=mysqli_fetch_array($result_form);
+$alloted_sql="select alloted from booking where application_id='$appid'";
+
+$result_alloted=mysqli_query($con,$alloted_sql);
+$alloted=mysqli_fetch_array($result_alloted);
+
+$hostel_query="select hostel_no from student_data where application_id='$appid'";
+$result_hostel=mysqli_query($con,$hostel_query);
+$hostel=mysqli_fetch_array($result_hostel);
+
+
+$upload_query="select uploaded from docs where application_id='$appid'";
+$result_upload=mysqli_query($con,$upload_query);
+$uploaded=mysqli_fetch_array($result_upload);
+
+$_SESSION['gender']=$dbpassword["gender"];
+
+
+
+
+
+if($dbpassword["password"]==$password && $dbpassword["application_id"]==$appid)
+{
+    if($uploaded['uploaded']!=1)
+    {
+        $_SESSION["authenticated"]=true;
+        header('Location:doc.php');
+    }
+    
+    if($uploaded['uploaded']==1 && $filled['filled']!=1)
+    {
+          $_SESSION["authenticated"]=true;
+            header('Location:form.php');
+    }
+    
+    if($uploaded['uploaded']==1 && $filled['filled']==1 && $alloted['alloted']!=1)
+    {
+       if($hostel['hostel_no']=="1")
+       {
+            $_SESSION["authenticated"]=true;
+            header('Location:bh1.php');
+       }
+       
+       if($hostel['hostel_no']=="2")
+       {
+            $_SESSION["authenticated"]=true;
+            header('Location:bh2.php');
+       }
+       
+       if($hostel['hostel_no']=="5")
+       {
+            $_SESSION["authenticated"]=true;
+            header('Location:bh5.php');
+       }
+       
+       if($hostel['hostel_no']=="GH2")
+       {
+            $_SESSION["authenticated"]=true;
+            header('Location:gh2.php');
+       }
+    }
+    
+    if($uploaded['uploaded']==1 && $filled['filled']==1 && $alloted['alloted']==1)
+    {
+         $_SESSION["authenticated"]=true;
+            header('Location:alloted.php');
+    }
+}
+
+else
+{
+     echo '<script type=\'text/javascript\'> alert("Wrong Application ID or Password"); location="index.php";</script>';
+}
+
+}
+
+
+/*if($dbpassword["password"]==$password && $dbpassword["application_id"]==$appid && $filled['filled']!=1 )
+{
+$_SESSION["authenticated"]=true;
+header('Location:form.php');
+}
+
+if($dbpassword["password"]==$password && $dbpassword["application_id"]==$appid && $filled['filled']==1 && $alloted['alloted']!=1 )
+{
+    if($hostel["hostel_no"]=="1")
+    {
+        
+    $_SESSION["authenticated"]=true;
+header('Location:bh1.php');
+
+}
+
+if($hostel["hostel_no"]=="2")
+    {
+        
+    $_SESSION["authenticated"]=true;
+header('Location:bh2.php');
+
+}
+
+if($hostel["hostel_no"]=="5")
+    {
+        
+    $_SESSION["authenticated"]=true;
+header('Location:bh5.php');
+
+}
+
+if($hostel["hostel_no"]=="GH2")
+    {
+        
+    $_SESSION["authenticated"]=true;
+header('Location:gh2.php');
+
+}
+}
+
+if($dbpassword["password"]==$password && $dbpassword["application_id"]==$appid && $filled['filled']==1 && $alloted['alloted']==1 )
+{
+      $_SESSION["authenticated"]=true;
+header('Location:alloted.php');
+}
+
+
+else
+{
+     echo '<script type=\'text/javascript\'> alert("Wrong Application ID and Password"); location="index.php";</script>';
+}
+
+
+}
+
+*/
+
+
+?>
