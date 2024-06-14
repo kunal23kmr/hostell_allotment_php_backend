@@ -27,10 +27,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $sql_check = "SELECT verification_code FROM users WHERE email = ?";
     $stmt_check = $pdo->prepare($sql_check);
     $stmt_check->execute([$email]);
-    $code = $stmt_check->fetch();
+    $result = $stmt_check->fetch();
 
-    if ($user) {
-        if (sendResetEmail($email, $code)) {
+    if ($result) {
+        if (sendResetEmail($email, $result['verification_code'])) {
             http_response_code(200);
             echo json_encode(['status' => 'success', 'message' => 'Password reset link has been sent to your email.']);
         } else {
