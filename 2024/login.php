@@ -30,7 +30,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['user'] = [
                     'email' => $result['email'],
                     'roll_number' => $result['roll_number'],
-                    'name' => $result['name']
                 ];
 
                 // Remove sensitive data before returning the user info
